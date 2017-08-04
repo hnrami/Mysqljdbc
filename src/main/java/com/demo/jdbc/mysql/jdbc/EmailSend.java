@@ -1,7 +1,11 @@
 package com.demo.jdbc.mysql.jdbc;
 
+import java.io.File;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -18,12 +22,15 @@ public class EmailSend {
 	
 	
 	
-	public static void sendEmail(String emailID,String body,String subject){
+	public static void sendEmail(String emailID,String body,String subject,File file,String filename){
+		
+		
+		
 		String to =emailID;
-	      String from = "xxx@gmail.com";
+	      String from = "xxxxxxxxx@gmail.com";
 
-	      final String username = "xxx@gmail.com";//change accordingly
-	      final String password = "yyyy";//change accordingly
+	      final String username = "xxxxxx@gmail.com";//change accordingly
+	      final String password = "xxxxx@xxxx";//change accordingly
 
 	      // Assuming you are sending email through relay.jangosmtp.net
 	      String host = "smtp.gmail.com";
@@ -67,6 +74,17 @@ public class EmailSend {
 	         else	 
 	        	 messageBodyPart.setText("This is message body");
 
+	         
+	      // Set To: header field of the header.
+	         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+	         // Set Subject: header field
+	         message.setSubject(subject);
+
+	         // Now set the actual message
+	         message.setText(body);
+
+	         
 	         // Create a multipar message
 	         Multipart multipart = new MimeMultipart();
 
@@ -74,7 +92,11 @@ public class EmailSend {
 	         multipart.addBodyPart(messageBodyPart);
 
 	         // Part two is attachment
+	         // Part two is attachment
 	         messageBodyPart = new MimeBodyPart();
+	         DataSource source = new FileDataSource(file.getPath());
+	         messageBodyPart.setDataHandler(new DataHandler(source));
+	         messageBodyPart.setFileName(filename);
 	         multipart.addBodyPart(messageBodyPart);
 
 	         // Send the complete message parts
@@ -84,6 +106,11 @@ public class EmailSend {
 	         Transport.send(message);
 
 	         System.out.println("Sent message successfully....");
+
+	         // Send message
+	         Transport.send(message);
+	         System.out.println("Sent message successfully....");
+	         
 	  
 	      } catch (MessagingException e) {
 	         throw new RuntimeException(e);
